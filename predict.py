@@ -131,6 +131,12 @@ def removeCol3Nums(possible_nums):
     if len(set(i).intersection(c1)) != 6 and len(set(i).intersection(c2)) != 6 and len(set(i).intersection(c3)) != 6 and len(set(i).intersection(c4)) != 6 and len(set(i).intersection(c5)) != 6]
     return remove_col_3_nums
 
+# 3수 연속으로 나온 수 제거
+def removeContibuousNums(possible_nums):
+    conti_num = {(i,i+1,i+2) for i in range(1,44)}
+    not_conti_nums = [i for i in possible_nums if len(set(itertools.combinations(i, 3)).intersection(conti_num)) == 0]
+    return not_conti_nums
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -157,3 +163,5 @@ possible_nums = removeRow3Nums(possible_nums)
 print("가로 연속 3줄에서만 나온 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeCol3Nums(possible_nums)
 print("세로 연속 3줄에서만 나온 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeContibuousNums(possible_nums)
+print("3연속 수 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
