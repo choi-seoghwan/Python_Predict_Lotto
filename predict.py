@@ -62,6 +62,12 @@ def removeFinalNum(possible_nums):
     remove_final_nums = [i for i in possible_nums if i[5] > 30]
     return remove_final_nums
 
+# 모서리수 (모서리에서 1~4개 나옴)
+def addEdgeNums(possible_nums):
+    edge_num = {1,2,8,9, 5,6,13,14, 39,30,36,37, 34,35,41,42, 43,44,45}
+    add_edge_nums = [i for i in possible_nums if 0 < len(set(i).intersection(edge_num)) < 5]
+    return add_edge_nums
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -78,3 +84,5 @@ possible_nums = removeFirstNum(possible_nums)
 print("첫 수가 15초과 제거 수:", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeFinalNum(possible_nums)
 print("마지막 수가 30미만 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = addEdgeNums(possible_nums)
+print("모서리 수가 1~4개 포함된 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
