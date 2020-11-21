@@ -107,6 +107,18 @@ def addColorNums(possible_nums):
     
     return add_color_nums
 
+# 가로 3줄 연속에서만 나온 수 제거
+def removeRow3Nums(possible_nums):
+    c1 = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21}
+    c2 = {8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28}
+    c3 = {15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35}
+    c4 = {22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42}
+    c5 = {29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45}
+
+    remove_row_3_nums = [i for i in possible_nums \
+    if len(set(i).intersection(c1)) != 6 and len(set(i).intersection(c2)) != 6 and len(set(i).intersection(c3)) != 6 and len(set(i).intersection(c4)) != 6 and len(set(i).intersection(c5)) != 6]
+    return remove_row_3_nums
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -129,3 +141,5 @@ possible_nums = removeFrontBack4Nums(possible_nums)
 print("세로 앞뒤 4줄에서만..제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = addColorNums(possible_nums)
 print("볼 색깔 3~4개 출현 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeRow3Nums(possible_nums)
+print("가로 연속 3줄에서만 나온 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
