@@ -188,6 +188,11 @@ def removeContibuous2(possible_nums):
     notContiNum = [i for i in possible_nums if len(set(itertools.combinations(i, 2)).intersection(conti_num)) < 2]
     return notContiNum
 
+# 끝합 ( 10 ~ 35 )
+def removeEndSumNums(possible_nums):
+    remove_end_sums = [i for i in possible_nums if 9 < sum([i[0]%10,i[1]%10,i[2]%10,i[3]%10,i[4]%10,i[5]%10]) < 36]
+    return remove_end_sums
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -224,3 +229,5 @@ possible_nums = removePongNums(possible_nums)
 print("퐁당퐁당 나온 수         제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeContibuous2(possible_nums)
 print("연속 번호가 2가지 이상  제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeEndSumNums(possible_nums)
+print("끝수 합이 10~35아닌 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
