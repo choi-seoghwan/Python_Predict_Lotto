@@ -214,6 +214,18 @@ def removeBeforeWinningNums(possible_nums):
 
     return possible_nums
 
+#삼각패턴
+def removeTriNums(possible_nums):
+    left_top = {1,2,3,4,5,6,7,8,9,10,11,12,13,15,16,17,18,19,22,23,24,25,29,3,31,36,37,43}
+    left_bottom = {1,8,9,15,16,17,22,23,24,25,29,3,31,32,33,36,37,38,39,40,41,43,44,45}
+    right_top = {1,2,3,4,5,6,7,9,10,11,12,13,14,17,18,19,20,21,25,26,27,28,33,34,35,41,42}
+    right_bottom = {7,13,14,19,20,21,25,26,27,28,31,32,33,34,35,37,38,39,40,41,42,43,44,45} 
+    remove_tri_nums = [i for i in possible_nums if len(set(i).intersection(left_top)) != 6 and \
+                   len(set(i).intersection(left_bottom)) != 6 and\
+                       len(set(i).intersection(right_top)) != 6 and\
+                           len(set(i).intersection(right_bottom)) != 6]
+    return remove_tri_nums
+    
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -256,3 +268,5 @@ possible_nums = removeEndNums(possible_nums)
 print("끝수가 동일한 것 1~2개    출현 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeBeforeWinningNums(possible_nums)
 print("이때까지 나온 수 동일 4개 이하 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeTriNums(possible_nums)
+print("삼각패턴                 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
