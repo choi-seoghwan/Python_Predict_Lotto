@@ -143,6 +143,36 @@ def removeContibuousNums(possible_nums):
     not_conti_nums = [i for i in possible_nums if len(set(itertools.combinations(i, 3)).intersection(conti_num)) == 0]
     return not_conti_nums
 
+# 가로연속 6줄
+def removeRow16Nums(possible_nums):
+    c1 = {1,2,3,4,5,6,7}
+    c2 = {8,9,10,11,12,13,14}
+    c3 = {15,16,17,18,19,20,21}
+    c4 = {22,23,24,25,26,27,28}
+    c5 = {29,30,31,32,33,34,35}
+    c6 = {36,37,38,39,40,41,42}
+    c7 = {43,44,45}
+
+    pre_num = [i for i in possible_nums \
+    if not (len(set(i).intersection(c1)) == 1 and \
+        len(set(i).intersection(c2)) == 1 and \
+            len(set(i).intersection(c3)) == 1 and \
+                len(set(i).intersection(c4)) == 1 and \
+                    len(set(i).intersection(c5)) == 1 and \
+                        len(set(i).intersection(c6)) == 1)]
+    pre_num2 = [i for i in pre_num \
+    if not(len(set(i).intersection(c2)) == 1 and \
+        len(set(i).intersection(c3)) == 1 and \
+            len(set(i).intersection(c4)) == 1 and \
+                len(set(i).intersection(c5)) == 1 and \
+                    len(set(i).intersection(c6)) == 1 and \
+                        len(set(i).intersection(c7)) == 1)]
+    return pre_num2
+
+
+
+
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -173,3 +203,5 @@ possible_nums = removeLeftRight2Nums(possible_nums)
 print("세로 좌우 2줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeContibuousNums(possible_nums)
 print("3연속 수                  제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeRow16Nums(possible_nums)
+print("가로 연속 6줄 나온 수     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
