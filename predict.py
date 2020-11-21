@@ -223,95 +223,6 @@ def removeTriNums(possible_nums):
                            len(set(i).intersection(right_bottom)) != 6]
     return remove_tri_nums
 
-# 최근 10개
-def recentTen(possible_nums):
-    # 938
-    green = {5,8,9,19,20,25,26,28,30,31,37,40,41,45}
-    red = {3,6,7,11,13,17,18,21,22,23,27,36,38,42,43,44}
-    average = {1,2,4,10,12,14,15,16,24,29,32,33,34,35,39}
-     
-    green_add = set(itertools.combinations(green, 2))   #2개이상 마아야됨
-    red_remove = set(itertools.combinations(red, 3))
-    average_remove = set(itertools.combinations(average, 4))
-    
-    green_add_nums = [i for i in possible_nums if len(set(itertools.combinations(i, 2)).intersection(green_add)) > 0]   
-    remove_red_nums = [i for i in green_add_nums if len(set(itertools.combinations(i, 3)).intersection(red_remove)) == 0]
-    remove_average_nums = [i for i in remove_red_nums if len(set(itertools.combinations(i, 4)).intersection(average_remove)) == 0]
-    
-    return remove_average_nums
-    
-# 이번회차 938
-def removeRoundNum(possible_nums):
-    #라운드 30
-    possible_nums = [i for i in possible_nums if 20 not in i]
-    #2주연속 같은번호
-    possible_nums = [i for i in possible_nums if 13 not in i and 29 not in i]
-    #지난회차 같은번호 2개 이하
-    remove_before_winning_num = {2,10,13,22,29,40,26}
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(remove_before_winning_num)) < 3]
-
-    ##초개미
-    #마방진 십자구간
-    cross_num = {1,9,17,25,33,41,5,14,16,34,36,45}
-    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(cross_num)) < 4]
-    #마방진 가로구간
-    row_num5 = {13,15,24,33,42,44,4}
-    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(row_num5)) < 4]
-    #마방진 세로 라인
-    col_num2 = {39,6,14,15,23,31}
-    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(col_num2)) < 3]
-    #일본로또 제외수 9 (45)
-    possible_nums = [i for i in possible_nums if 9 not in i]
-    #일본로또
-    japan_num = {8,9,4,2,19}      
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(japan_num)) < 2]
-    #이스라엘 +수
-    israel_nums = {9,19,22,24,29,34}
-    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(israel_nums)) < 3]
-    #이스라엘 제외수 1
-    possible_nums = [i for i in possible_nums if 1 not in i]
-
-    #뉴질랜드 제외수 40
-    possible_nums = [i for i in possible_nums if 40 not in i]
-    #청개구리
-    frog_num = {3,9,11,12,13,19}
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(frog_num)) == 1]
-    
-    #밀크 29
-    possible_nums = [i for i in possible_nums if 29 not in i]
-    #로또박 05
-    possible_nums = [i for i in possible_nums if 5 not in i]
-    #꿀꿀이 32
-    possible_nums = [i for i in possible_nums if 32 not in i]
-    
-    ##로또9단
-    #합계 120이상
-    possible_nums = [i for i in possible_nums if 120 < sum(i)]
-    #1~9 약함(멸하거나 1개)
-    ones_nums = {1,2,3,4,5,6,7,8,9}
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(ones_nums)) < 2]
-    #30번대 필출(2~3수) + 초개미
-    thirty_num = {30,31,32,33,34,35,36,37,38,39}
-    possible_nums = [i for i in possible_nums if 1 < len(set(i).intersection(thirty_num)) < 4]
-    #로또9단
-    park_nums = {8,16,20,21,23,24,25,26,27,28,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45}
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(park_nums)) > 3]
-    
-    ##로또리치
-    rich_num = {1,3,8,9,11,12,19,21,22,28,3,31,36,41,44}
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(rich_num)) < 4]
-    ##행운의 신
-    luck_num = {8,12,29,32,35,9,11,13,14,16}
-    possible_nums = [i for i in possible_nums if 1 < len(set(i).intersection(luck_num)) < 5]
-    luck_num2 = {34,7,12,16,24,31,33,42,40,45}
-    possible_nums = [i for i in possible_nums if 1 < len(set(i).intersection(luck_num2)) < 5]
-    
-    #짜장짬뽕
-    week_no_show_num = {16,24,34,41,42}
-    possible_nums = [i for i in possible_nums if len(set(i).intersection(week_no_show_num)) == 1]
-    possible_nums = [i for i in possible_nums if 33 not in i]
-    return possible_nums
-
 def start():
     
     # 시작
@@ -362,10 +273,6 @@ def start():
     print("3연속 수                   제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
     possible_nums = removeBeforeWinningNums(possible_nums)
     print("이때까지 나온 수 동일 4개 이하 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-    
-    possible_nums = recentTen(possible_nums)
-    print("최근 10회 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-    possible_nums = removeRoundNum(possible_nums)
-    print("938회 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+
     print(" -------------------------------------------------------------------------------------- ")
     print(" 총 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
