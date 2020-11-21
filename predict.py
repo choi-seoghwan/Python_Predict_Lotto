@@ -182,6 +182,12 @@ def removePongNums(possible_nums):
     pong3_list = set(itertools.combinations(c3, 6))
     return list(((possible_nums - pong1_list) - pong2_list)-pong3_list)
 
+# 연속번호가 2가지 이상인 것 제거
+def removeContibuous2(possible_nums):
+    conti_num = {(i,i+1) for i in range(1,45)}
+    notContiNum = [i for i in possible_nums if len(set(itertools.combinations(i, 2)).intersection(conti_num)) < 2]
+    return notContiNum
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -216,3 +222,5 @@ possible_nums = removeRow16Nums(possible_nums)
 print("가로 연속 6줄 나온 수     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removePongNums(possible_nums)
 print("퐁당퐁당 나온 수         제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeContibuous2(possible_nums)
+print("연속 번호가 2가지 이상  제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
