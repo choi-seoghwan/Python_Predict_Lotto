@@ -7,6 +7,7 @@ Created on Fri Nov 20 17:02:01 2020
 
 import sqlite3
 import time
+import itertools
 
 # DB연결 현재깢지 나온 수(938)
 def untilNowNums():
@@ -68,6 +69,17 @@ def addEdgeNums(possible_nums):
     add_edge_nums = [i for i in possible_nums if 0 < len(set(i).intersection(edge_num)) < 5]
     return add_edge_nums
 
+# 앞뒤4 ( 세로 앞4라인에서 6수, 세로 뒤4라인에서 6수 제거 )
+def removeFrontBack4Nums(possible_nums):
+    possible_nums = set(possible_nums)
+    front4 = {1,8,15,22,29,36,43,2,9,16,23,30,37,44,3,10,17,24,31,38,45,4,11,18,25,32,39}
+    back4 = {4,11,18,25,32,39,5,12,19,26,33,40,6,13,20,27,34,41,7,14,21,27,35,42}
+    
+    front4_list = set(itertools.combinations(front4, 6))    # 세로 앞 4줄에서만 나온 수
+    back4_list  = set(itertools.combinations(back4, 6))     # 세로 뒤 4줄에서만 나온 수
+
+    return list((possible_nums - front4_list) - back4_list)
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -86,3 +98,5 @@ possible_nums = removeFinalNum(possible_nums)
 print("마지막 수가 30미만 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = addEdgeNums(possible_nums)
 print("모서리 수가 1~4개 포함된 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeFrontBack4Nums(possible_nums)
+print("세로 앞뒤 4줄에서만..제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
