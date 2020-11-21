@@ -169,9 +169,18 @@ def removeRow16Nums(possible_nums):
                         len(set(i).intersection(c7)) == 1)]
     return pre_num2
 
-
-
-
+# 퐁당퐁당
+def removePongNums(possible_nums):
+    c1 = {1,8,15,22,29,36,43,2,9,16,23,30,37,44,4,11,18,25,32,39,5,12,19,26,33,40}
+    c2 = {2,9,16,23,30,37,44,3,10,17,24,31,38,45,5,12,19,26,33,40,6,13,20,27,34,41}
+    c3 = {3,10,17,24,31,38,45,4,11,18,25,32,39,6,13,20,27,34,41,7,14,21,27,35,42}
+    
+    possible_nums = set(possible_nums)
+    
+    pong1_list = set(itertools.combinations(c1, 6))
+    pong2_list = set(itertools.combinations(c2, 6))
+    pong3_list = set(itertools.combinations(c3, 6))
+    return list(((possible_nums - pong1_list) - pong2_list)-pong3_list)
 
 # 시작
 start = time.time()
@@ -205,3 +214,5 @@ possible_nums = removeContibuousNums(possible_nums)
 print("3연속 수                  제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeRow16Nums(possible_nums)
 print("가로 연속 6줄 나온 수     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removePongNums(possible_nums)
+print("퐁당퐁당 나온 수         제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
