@@ -80,6 +80,33 @@ def removeFrontBack4Nums(possible_nums):
 
     return list((possible_nums - front4_list) - back4_list)
 
+# 색깔 ( 1~10,11~20,...,41~45 : 3 ~ 4 )
+def addColorNums(possible_nums):
+    color_1 = {1,2,3,4,5,6,7,8,9,10}
+    color_2 = {11,12,13,14,15,16,17,18,19,20}
+    color_3 = {21,22,23,24,25,26,27,28,29,30}
+    color_4 = {31,32,33,34,35,36,37,38,39,40}
+    color_5 = {41,42,43,44,45}
+    
+    add_color_nums = []
+    for i in possible_nums:
+        color_count = 0
+        if len(set(i).intersection(color_1)) > 0 :
+            color_count += 1
+        if len(set(i).intersection(color_2)) > 0 :
+            color_count += 1
+        if len(set(i).intersection(color_3)) > 0 :
+            color_count += 1
+        if len(set(i).intersection(color_4)) > 0 :
+            color_count += 1
+        if len(set(i).intersection(color_5)) > 0 :
+            color_count += 1
+        
+        if 2 < color_count < 5:
+                add_color_nums.append(i)
+    
+    return add_color_nums
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -100,3 +127,5 @@ possible_nums = addEdgeNums(possible_nums)
 print("모서리 수가 1~4개 포함된 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeFrontBack4Nums(possible_nums)
 print("세로 앞뒤 4줄에서만..제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = addColorNums(possible_nums)
+print("볼 색깔 3~4개 출현 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
