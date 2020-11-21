@@ -47,6 +47,12 @@ def removeSumNums(possible_nums):
     remove_sum_nums = [i for i in possible_nums if 94 < sum(i) < 176]
     return remove_sum_nums
 
+# 짝홀 제거 ( 1:5, 2:4, 3:3, 4:2, 5:1 )
+def removeOddNums(possible_nums):
+    remove_odd_nums = [i for i in possible_nums if 0 < i[0]%2+i[1]%2+i[2]%2+i[3]%2+i[4]%2+i[5]%2 < 6]
+    return remove_odd_nums
+
+
 # 시작
 start = time.time()
 # DB연결 및 현재(938)까지 나온 번호
@@ -57,4 +63,5 @@ possible_nums = totalPossibleNums(until_now_nums)
 print("나올 수 있는 번호 조합 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeSumNums(possible_nums)
 print("합계 95미만, 176초과 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-
+possible_nums = removeOddNums(possible_nums)
+print("홀짝 6:0 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
