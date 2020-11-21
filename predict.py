@@ -193,11 +193,26 @@ def removeEndSumNums(possible_nums):
     remove_end_sums = [i for i in possible_nums if 9 < sum([i[0]%10,i[1]%10,i[2]%10,i[3]%10,i[4]%10,i[5]%10]) < 36]
     return remove_end_sums
 
-
 # 동끝수 (끝수가 동일한 것 1,2개)
 def removeEndNums(possible_nums):
     remove_end_nums = [i for i in possible_nums if len(set([i[0]%10,i[1]%10,i[2]%10,i[3]%10,i[4]%10,i[5]%10])) > 3]
     return remove_end_nums
+
+# 이전회차 같은번호 4개 이하
+def removeBeforeWinningNums(possible_nums):
+    db_conn = sqlite3.connect("C:/Users/choi/Documents/pythonwork/lotto/LOTTO.db", isolation_level=None)
+    cursor = db_conn.cursor()
+    cursor.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT")
+    current = cursor.fetchall()
+    db_conn.close()
+
+    for i in possible_nums:
+        for j in current:
+            if len(set(i).intersection(set(j))) > 4:
+                    if i in possible_nums:
+                        possible_nums.remove(i)
+
+    return possible_nums
 
 # 시작
 start = time.time()
@@ -228,14 +243,16 @@ print("세로 연속 3줄에서만 나온 수 제거 :", len(possible_nums),"걸
 possible_nums = removeLeftRight2Nums(possible_nums)
 print("세로 좌우 2줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeContibuousNums(possible_nums)
-print("3연속 수                  제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+print("3연속 수                   제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeRow16Nums(possible_nums)
-print("가로 연속 6줄 나온 수     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+print("가로 연속 6줄 나온 수      제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removePongNums(possible_nums)
-print("퐁당퐁당 나온 수         제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+print("퐁당퐁당 나온 수           제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeContibuous2(possible_nums)
-print("연속 번호가 2가지 이상  제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+print("연속 번호가 2가지 이상     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeEndSumNums(possible_nums)
-print("끝수 합이 10~35아닌 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+print("끝수 합이 10~35아닌 수    제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeEndNums(possible_nums)
-print("끝수가 동일한 것 1~2개 출현 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+print("끝수가 동일한 것 1~2개    출현 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeBeforeWinningNums(possible_nums)
+print("이때까지 나온 수 동일 4개 이하 :", len(possible_nums),"걸린시간 : ", time.time() - start)
