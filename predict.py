@@ -52,6 +52,15 @@ def removeOddNums(possible_nums):
     remove_odd_nums = [i for i in possible_nums if 0 < i[0]%2+i[1]%2+i[2]%2+i[3]%2+i[4]%2+i[5]%2 < 6]
     return remove_odd_nums
 
+# 첫수 ( 16 미만 )
+def removeFirstNum(possible_nums):
+    remove_first_nums = [i for i in possible_nums if i[0] < 16]
+    return remove_first_nums
+
+# 마지막수 ( 30 초과 )
+def removeFinalNum(possible_nums):
+    remove_final_nums = [i for i in possible_nums if i[5] > 30]
+    return remove_final_nums
 
 # 시작
 start = time.time()
@@ -65,3 +74,7 @@ possible_nums = removeSumNums(possible_nums)
 print("합계 95미만, 176초과 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeOddNums(possible_nums)
 print("홀짝 6:0 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeFirstNum(possible_nums)
+print("첫 수가 15초과 제거 수:", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeFinalNum(possible_nums)
+print("마지막 수가 30미만 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
