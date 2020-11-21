@@ -71,14 +71,13 @@ def addEdgeNums(possible_nums):
 
 # 앞뒤4 ( 세로 앞4라인에서 6수, 세로 뒤4라인에서 6수 제거 )
 def removeFrontBack4Nums(possible_nums):
-    possible_nums = set(possible_nums)
     front4 = {1,8,15,22,29,36,43,2,9,16,23,30,37,44,3,10,17,24,31,38,45,4,11,18,25,32,39}
     back4 = {4,11,18,25,32,39,5,12,19,26,33,40,6,13,20,27,34,41,7,14,21,27,35,42}
     
-    front4_list = set(itertools.combinations(front4, 6))    # 세로 앞 4줄에서만 나온 수
-    back4_list  = set(itertools.combinations(back4, 6))     # 세로 뒤 4줄에서만 나온 수
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(front4)) < 6] # 세로 앞 4줄에서만 나온 수
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(back4)) < 6] # 세로 뒤 4줄에서만 나온 수
 
-    return list((possible_nums - front4_list) - back4_list)
+    return possible_nums
 
 # 색깔 ( 1~10,11~20,...,41~45 : 3 ~ 4 )
 def addColorNums(possible_nums):
@@ -174,13 +173,11 @@ def removePongNums(possible_nums):
     c1 = {1,8,15,22,29,36,43,2,9,16,23,30,37,44,4,11,18,25,32,39,5,12,19,26,33,40}
     c2 = {2,9,16,23,30,37,44,3,10,17,24,31,38,45,5,12,19,26,33,40,6,13,20,27,34,41}
     c3 = {3,10,17,24,31,38,45,4,11,18,25,32,39,6,13,20,27,34,41,7,14,21,27,35,42}
-    
-    possible_nums = set(possible_nums)
-    
-    pong1_list = set(itertools.combinations(c1, 6))
-    pong2_list = set(itertools.combinations(c2, 6))
-    pong3_list = set(itertools.combinations(c3, 6))
-    return list(((possible_nums - pong1_list) - pong2_list)-pong3_list)
+
+    pong1_list = [i for i in possible_nums if len(set(i).intersection(c1)) < 6]
+    pong2_list = [i for i in pong1_list if len(set(i).intersection(c2)) < 6]
+    pong3_list = [i for i in pong2_list if len(set(i).intersection(c3)) < 6]
+    return pong3_list
 
 # 연속번호가 2가지 이상인 것 제거
 def removeContibuous2(possible_nums):
@@ -226,53 +223,149 @@ def removeTriNums(possible_nums):
                            len(set(i).intersection(right_bottom)) != 6]
     return remove_tri_nums
 
-# 시작
-start = time.time()
-# DB연결 및 현재(938)까지 나온 번호
-until_now_nums = untilNowNums()
+# 최근 10개
+def recentTen(possible_nums):
+    # 938
+    green = {5,8,9,19,20,25,26,28,30,31,37,40,41,45}
+    red = {3,6,7,11,13,17,18,21,22,23,27,36,38,42,43,44}
+    average = {1,2,4,10,12,14,15,16,24,29,32,33,34,35,39}
+     
+    green_add = set(itertools.combinations(green, 2))   #2개이상 마아야됨
+    red_remove = set(itertools.combinations(red, 3))
+    average_remove = set(itertools.combinations(average, 4))
+    
+    green_add_nums = [i for i in possible_nums if len(set(itertools.combinations(i, 2)).intersection(green_add)) > 0]   
+    remove_red_nums = [i for i in green_add_nums if len(set(itertools.combinations(i, 3)).intersection(red_remove)) == 0]
+    remove_average_nums = [i for i in remove_red_nums if len(set(itertools.combinations(i, 4)).intersection(average_remove)) == 0]
+    
+    return remove_average_nums
+    
+# 이번회차 938
+def removeRoundNum(possible_nums):
+    #라운드 30
+    possible_nums = [i for i in possible_nums if 20 not in i]
+    #2주연속 같은번호
+    possible_nums = [i for i in possible_nums if 13 not in i and 29 not in i]
+    #지난회차 같은번호 2개 이하
+    remove_before_winning_num = {2,10,13,22,29,40,26}
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(remove_before_winning_num)) < 3]
 
-# 나올 수 있는 번호 조합
-possible_nums = totalPossibleNums(until_now_nums)
-print("나올 수 있는 번호        조합 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeFirstNum(possible_nums)
-print("첫 수가 15초과           제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeFinalNum(possible_nums)
-print("마지막 수가 30미만        제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeSumNums(possible_nums)
-print("합계 95미만, 176초과     제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeEndNums(possible_nums)
-print("끝수가 동일한 것 1~2개    출현 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeOddNums(possible_nums)
-print("홀짝 6:0                 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = addEdgeNums(possible_nums)
-print("모서리 수가 1~4개        포함 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeFrontBack4Nums(possible_nums)
-print("세로 앞뒤 4줄에서만..    제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeEndSumNums(possible_nums)
-print("끝수 합이 10~35아닌 수    제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeRow16Nums(possible_nums)
-print("가로 연속 6줄 나온 수      제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeContibuousNums(possible_nums)
-print("3연속 수                   제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeTriNums(possible_nums)
-print("삼각패턴                 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = addColorNums(possible_nums)
-print("공 색깔 3~4개           출현 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeRow3Nums(possible_nums)
-print("가로 연속 3줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeCol3Nums(possible_nums)
-print("세로 연속 3줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    ##초개미
+    #마방진 십자구간
+    cross_num = {1,9,17,25,33,41,5,14,16,34,36,45}
+    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(cross_num)) < 4]
+    #마방진 가로구간
+    row_num5 = {13,15,24,33,42,44,4}
+    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(row_num5)) < 4]
+    #마방진 세로 라인
+    col_num2 = {39,6,14,15,23,31}
+    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(col_num2)) < 3]
+    #일본로또 제외수 9 (45)
+    possible_nums = [i for i in possible_nums if 9 not in i]
+    #일본로또
+    japan_num = {8,9,4,2,19}      
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(japan_num)) < 2]
+    #이스라엘 +수
+    israel_nums = {9,19,22,24,29,34}
+    possible_nums = [i for i in possible_nums if 0 < len(set(i).intersection(israel_nums)) < 3]
+    #이스라엘 제외수 1
+    possible_nums = [i for i in possible_nums if 1 not in i]
 
-possible_nums = removeContibuous2(possible_nums)
-print("연속 번호가 2가지 이상     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removePongNums(possible_nums)
-print("퐁당퐁당 나온 수           제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeLeftRight2Nums(possible_nums)
-print("세로 좌우 2줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeContibuousNums(possible_nums)
-print("3연속 수                   제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
-possible_nums = removeBeforeWinningNums(possible_nums)
-print("이때까지 나온 수 동일 4개 이하 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    #뉴질랜드 제외수 40
+    possible_nums = [i for i in possible_nums if 40 not in i]
+    #청개구리
+    frog_num = {3,9,11,12,13,19}
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(frog_num)) == 1]
+    
+    #밀크 29
+    possible_nums = [i for i in possible_nums if 29 not in i]
+    #로또박 05
+    possible_nums = [i for i in possible_nums if 5 not in i]
+    #꿀꿀이 32
+    possible_nums = [i for i in possible_nums if 32 not in i]
+    
+    ##로또9단
+    #합계 120이상
+    possible_nums = [i for i in possible_nums if 120 < sum(i)]
+    #1~9 약함(멸하거나 1개)
+    ones_nums = {1,2,3,4,5,6,7,8,9}
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(ones_nums)) < 2]
+    #30번대 필출(2~3수) + 초개미
+    thirty_num = {30,31,32,33,34,35,36,37,38,39}
+    possible_nums = [i for i in possible_nums if 1 < len(set(i).intersection(thirty_num)) < 4]
+    #로또9단
+    park_nums = {8,16,20,21,23,24,25,26,27,28,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45}
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(park_nums)) > 3]
+    
+    ##로또리치
+    rich_num = {1,3,8,9,11,12,19,21,22,28,3,31,36,41,44}
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(rich_num)) < 4]
+    ##행운의 신
+    luck_num = {8,12,29,32,35,9,11,13,14,16}
+    possible_nums = [i for i in possible_nums if 1 < len(set(i).intersection(luck_num)) < 5]
+    luck_num2 = {34,7,12,16,24,31,33,42,40,45}
+    possible_nums = [i for i in possible_nums if 1 < len(set(i).intersection(luck_num2)) < 5]
+    
+    #짜장짬뽕
+    week_no_show_num = {16,24,34,41,42}
+    possible_nums = [i for i in possible_nums if len(set(i).intersection(week_no_show_num)) == 1]
+    possible_nums = [i for i in possible_nums if 33 not in i]
+    return possible_nums
 
-print(" -------------------------------------------------------------------------------------- ")
-print(" 총 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+def start():
+    
+    # 시작
+    start = time.time()
+    # DB연결 및 현재(938)까지 나온 번호
+    until_now_nums = untilNowNums()
+    
+    # 나올 수 있는 번호 조합
+    possible_nums = totalPossibleNums(until_now_nums)
+    print("나올 수 있는 번호        조합 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeFirstNum(possible_nums)
+    print("첫 수가 15초과           제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeFinalNum(possible_nums)
+    print("마지막 수가 30미만        제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeSumNums(possible_nums)
+    print("합계 95미만, 176초과     제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeEndNums(possible_nums)
+    print("끝수가 동일한 것 1~2개    출현 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeOddNums(possible_nums)
+    print("홀짝 6:0                 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = addEdgeNums(possible_nums)
+    print("모서리 수가 1~4개        포함 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeFrontBack4Nums(possible_nums)
+    print("세로 앞뒤 4줄에서만..    제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeEndSumNums(possible_nums)
+    print("끝수 합이 10~35아닌 수    제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeRow16Nums(possible_nums)
+    print("가로 연속 6줄 나온 수      제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeContibuousNums(possible_nums)
+    print("3연속 수                   제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    
+    possible_nums = removeTriNums(possible_nums)
+    print("삼각패턴                 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeRow3Nums(possible_nums)
+    print("가로 연속 3줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeCol3Nums(possible_nums)
+    print("세로 연속 3줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = addColorNums(possible_nums)
+    print("공 색깔 3~4개           출현 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    
+    possible_nums = removeContibuous2(possible_nums)
+    print("연속 번호가 2가지 이상     제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removePongNums(possible_nums)
+    print("퐁당퐁당 나온 수           제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeLeftRight2Nums(possible_nums)
+    print("세로 좌우 2줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeContibuousNums(possible_nums)
+    print("3연속 수                   제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeBeforeWinningNums(possible_nums)
+    print("이때까지 나온 수 동일 4개 이하 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    
+    possible_nums = recentTen(possible_nums)
+    print("최근 10회 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = removeRoundNum(possible_nums)
+    print("938회 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+    print(" -------------------------------------------------------------------------------------- ")
+    print(" 총 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
