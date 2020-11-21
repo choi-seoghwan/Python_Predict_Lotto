@@ -131,6 +131,12 @@ def removeCol3Nums(possible_nums):
     if len(set(i).intersection(c1)) != 6 and len(set(i).intersection(c2)) != 6 and len(set(i).intersection(c3)) != 6 and len(set(i).intersection(c4)) != 6 and len(set(i).intersection(c5)) != 6]
     return remove_col_3_nums
 
+# 세로 좌우 2줄에서만 나온 수 제거
+def removeLeftRight2Nums(possible_nums):
+    left_right_2_nums = {1,8,15,22,29,36,43,2,9,16,23,30,37,44,6,13,20,27,34,41,7,14,21,27,35,42}
+    remove_left_right_2_nums = [i for i in possible_nums if len(set(i).intersection(left_right_2_nums)) != 6]
+    return remove_left_right_2_nums
+
 # 3수 연속으로 나온 수 제거
 def removeContibuousNums(possible_nums):
     conti_num = {(i,i+1,i+2) for i in range(1,44)}
@@ -163,5 +169,7 @@ possible_nums = removeRow3Nums(possible_nums)
 print("가로 연속 3줄에서만 나온 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeCol3Nums(possible_nums)
 print("세로 연속 3줄에서만 나온 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
+possible_nums = removeLeftRight2Nums(possible_nums)
+print("세로 좌우 2줄에서만 나온 수 제거 :", len(possible_nums),"걸린시간 : ", time.time() - start)
 possible_nums = removeContibuousNums(possible_nums)
 print("3연속 수 제거 수 :", len(possible_nums),"걸린시간 : ", time.time() - start)
