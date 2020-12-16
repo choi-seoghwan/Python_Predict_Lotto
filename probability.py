@@ -13,9 +13,11 @@ import sqlite3
 
 db_conn = sqlite3.connect("LOTTO.db", isolation_level=None)
 cursor = db_conn.cursor()
-cursor.execute("SELECT * FROM CURRENT WHERE 900 < ROUND")
+cursor.execute("SELECT * FROM CURRENT WHERE 919 < ROUND")
 winning = cursor.fetchall()
 db_conn.close()  
+
+# winning = [(941,3,15,20,22,24,41)]
 
 first_nums = []         #1
 final_nums = []         #2
@@ -55,17 +57,21 @@ sum_nums = []           #3
 # youtube_nums = []       #21
 # beforewinning_nums = [] #22
 
+regression1 = [] #26-1
+regression2 = [] #26-2
+regression3 = [] #26-3
+regression4 = [] #26-4
 
-total_nums = []
+# total_nums = []
 
 # 나올 수 있는 번호 조합
 for i in winning:
-    if i[1:7] in predict.removeFirstNum([i[1:7]]):
-        first_nums.append(i[0])        
-    if i[1:7] in predict.removeFinalNum([i[1:7]]):   
-        final_nums.append(i[0])                               
-    if i[1:7] in predict.removeSumNums([i[1:7]]):   
-        sum_nums.append(i[0])  
+    # if i[1:7] in predict.removeFirstNum([i[1:7]]):
+    #     first_nums.append(i[0])        
+    # if i[1:7] in predict.removeFinalNum([i[1:7]]):   
+    #     final_nums.append(i[0])                               
+    # if i[1:7] in predict.removeSumNums([i[1:7]]):   
+    #     sum_nums.append(i[0])  
     # if i[1:7] in predict.removeEndNums([i[1:7]]):   
     #     end_nums.append(i[0])   
     # if i[1:7] in predict.removeOddNums([i[1:7]]):     
@@ -134,10 +140,18 @@ for i in winning:
     #     youtube_nums.append(i[0])
     # if i[1:7] in predict.removeBeforeWinningNums([i[1:7]],i[0]):
     #     beforewinning_nums.append(i[0])
+    if i[1:7] in predict.regression1([i[1:7]],i[0]):
+        regression1.append(i[0])
+    if i[1:7] in predict.regression2([i[1:7]],i[0]):
+        regression2.append(i[0])
+    if i[1:7] in predict.regression3([i[1:7]],i[0]):
+        regression3.append(i[0])
+    if i[1:7] in predict.regression4([i[1:7]],i[0]):
+        regression4.append(i[0])
    
-print("- 1. 첫 수 15 이하 확률					:", "%.2f%%" % (100 * len(first_nums)/len(winning)))
-print("- 2. 마지막 수 35 이상 확률 				:", "%.2f%%" % (100 * len(final_nums)/len(winning)))
-print("- 3. 합계 95~175 확률 			 		:", "%.2f%%" % (100 * len(sum_nums)/len(winning)))
+# print("- 1. 첫 수 15 이하 확률					:", "%.2f%%" % (100 * len(first_nums)/len(winning)))
+# print("- 2. 마지막 수 35 이상 확률 				:", "%.2f%%" % (100 * len(final_nums)/len(winning)))
+# print("- 3. 합계 95~175 확률 			 		:", "%.2f%%" % (100 * len(sum_nums)/len(winning)))
 # print("- 4.끝수 3개 이상 동일 				:", "%.2f%%" % (100 * len(end_nums)/len(winning)))
 # print("- 5.홀짝 6:0 		 				:", "%.2f%%" % (100 * len(odd_nums)/len(winning)))
 # print("- 6.모서리 수 0,5,6개	 			:", "%.2f%%" % (100 * len(edge_nums)/len(winning)))
@@ -172,4 +186,8 @@ print("- 3. 합계 95~175 확률 			 		:", "%.2f%%" % (100 * len(sum_nums)/len(w
 # print("- 20.Round							:", "%.2f%%" % (100 * len(round_nums)/len(winning)))
 # print("- 21.Youtube						:", "%.2f%%" % (100 * len(youtube_nums)/len(winning)))
 # print("- 22.이때까지 나온번호				:", "%.2f%%" % (100 * len(beforewinning_nums)/len(winning)))
+print("- 26.회기1							:", "%.2f%%" % (100 * len(regression1)/len(winning)))
+print("- 26.회기2							:", "%.2f%%" % (100 * len(regression2)/len(winning)))
+print("- 26.회기3							:", "%.2f%%" % (100 * len(regression3)/len(winning)))
+print("- 26.회기4							:", "%.2f%%" % (100 * len(regression4)/len(winning)))
 # print("- total								:", "%.2f%%" % (100 * len(total_nums)/len(winning)))

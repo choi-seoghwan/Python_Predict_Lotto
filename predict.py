@@ -532,26 +532,134 @@ def removeBeforeWinningNums(possible_nums, predict_round):
                     
     return possible_nums
 
-def regression(predict_round):
+# 26. 회기
+def regressionCount(regression_round):
     db_conn = sqlite3.connect("LOTTO.db", isolation_level=None)
     cursor1 = db_conn.cursor()
     cursor2 = db_conn.cursor()
-    for round_num in range(2,100):
-        cursor1.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(predict_round-1))
-        cursor2.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(predict_round-round_num))
+    
+    round_num = 1    
+    regression_count = []
+    
+    while(True):
+
+        if(regression_round - round_num == 0):
+            break
+        
+        cursor1.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(regression_round))
+        cursor2.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(regression_round-round_num))
         current = set(cursor1.fetchone())
         current1 = set(cursor2.fetchone())
-        if len(set(current).intersection(current1)) == 0 :
-            print(round_num)
+        regression_count.append(len(set(current).intersection(current1)))        
+        round_num = round_num + 1
+    db_conn.close()
+    return regression_count
+
+# 26. 회기1
+def regression1(possible_nums, predict_round):
+    
+    before_regression_count = regressionCount(predict_round-1)
+    before_over_regression = []
+    
+    for i in range(0,len(before_regression_count)):
+        if(before_regression_count[i] >= 3):
+            before_over_regression.append(i+1)
+    
+    db_conn = sqlite3.connect("LOTTO.db", isolation_level=None)
+    cursor = db_conn.cursor()
+      
+    current_regression = []
+    
+    for i in before_over_regression:
+        cursor.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(predict_round-i))
+        regression = cursor.fetchone()
+        current_regression.append(regression)     
     db_conn.close()
     
-    # for i in range(1, predict_round):
-    #     print(i)
+    not_possible_nums = {i for i in possible_nums for j in current_regression if len(set(i).intersection(j)) > 2}
+    possible_nums = set(possible_nums) - not_possible_nums    
+    possible_nums = list(possible_nums)
+   
+    # for j in current_regression:
+    #     possible_nums = [i for i in possible_nums if len(set(i).intersection(j)) < 3]
+    
+    return possible_nums
+
+# 26. 회기2
+def regression2(possible_nums, predict_round):
+    db_conn = sqlite3.connect("LOTTO.db", isolation_level=None)
+    cursor = db_conn.cursor()
+    
+    round_num = 1
+    current_regression = []
+    
+    while(True):
+
+        if round_num > 150:
+            break
+        
+        cursor.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(predict_round-round_num))
+        current = cursor.fetchone()
+        current_regression.append(current)        
+        round_num = round_num + 1
+    db_conn.close()
+    
+    # for j in current_regression:
+    #     possible_nums = [i for i in possible_nums if len(set(i).intersection(j)) < 4]
+        
+    not_possible_nums = {i for i in possible_nums for j in current_regression if len(set(i).intersection(j)) > 3}
+    possible_nums = set(possible_nums) - not_possible_nums    
+    possible_nums = list(possible_nums)
+    
+    return possible_nums
+
+# 26. 회기3
+def regression3(possible_nums, predict_round):
+    db_conn = sqlite3.connect("LOTTO.db", isolation_level=None)
+    cursor = db_conn.cursor()
+    
+    round_num = 1
+    current_regression = []
+    
+    while(True):
+
+        if predict_round - round_num == 0:
+            break
+        
+        cursor.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND == {0}".format(predict_round-round_num))
+        current = cursor.fetchone()
+        current_regression.append(current)        
+        round_num = round_num + 1
+    db_conn.close()
+    
+ 
+    not_possible_nums = {i for i in possible_nums for j in current_regression if len(set(i).intersection(j)) > 4}
+    possible_nums = set(possible_nums) - not_possible_nums    
+    possible_nums = list(possible_nums)
+    return possible_nums
+
+# 26. 회기4
+def regression4(possible_nums, predict_round, regression_round, max_sum, min_sum):
+    
+    db_conn = sqlite3.connect("LOTTO.db", isolation_level=None)
+    cursor = db_conn.cursor()   
+    cursor.execute("SELECT FIRST,SECOND,THIRD,FOURTH,FIVETH,SIXTH FROM CURRENT WHERE ROUND < {0} AND ROUND > {1}".format(predict_round,predict_round-regression_round-1))
+    current = cursor.fetchall()
+    db_conn.close()
+    
+    sum_iter = []
+    
+    for i in possible_nums:
+        sum_iter = [len(set(i).intersection(set(j))) for j in current]
+        if not min_sum < sum(sum_iter) < max_sum:
+            possible_nums.remove(i)
+    
+    return possible_nums
 
 def start(predict_round):    
     # predict_round = ss[0]
     
-    # 시작
+    # 시작s
     start = time.time()
     # DB연결
     until_now_nums = untilNowNums()
@@ -634,10 +742,26 @@ def start(predict_round):
     print("23. 지난회차						:", len(possible_nums),"걸린시간 : ", time.time() - start)
     possible_nums = averageNums(possible_nums)
     print("24. 평균							:", len(possible_nums),"걸린시간 : ", time.time() - start)
-    # possible_nums = removeBeforeWinningNums(possible_nums, predict_round)
-    # print("25.이때까지 나온 수 동일 4개 이하 	:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression1(possible_nums, predict_round)
+    print("26. 회기1						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression2(possible_nums, predict_round)
+    print("26. 회기2						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression3(possible_nums, predict_round)
+    print("26. 회기3						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression4(possible_nums, predict_round,10,14,2)
+    print("26. 회기4						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression4(possible_nums, predict_round,20,22,7)
+    print("26. 회기4						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression4(possible_nums, predict_round,30,29,16)
+    print("26. 회기4						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression4(possible_nums, predict_round,40,42,27)
+    print("26. 회기4						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    possible_nums = regression4(possible_nums, predict_round,50,47,32)
+    print("26. 회기4						:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    
     print(" -------------------------------------------------------------------------------- ")
     print(" 총 수 							:", len(possible_nums),"걸린시간 : ", time.time() - start)
+    
     last_nums = []
     for i in possible_nums:
         for j in range(0,len(i)):
@@ -645,8 +769,6 @@ def start(predict_round):
             
     container = collections.Counter(last_nums)
     print(container)
-    
-    
     
     # possible_winning = [i for i in possible_nums if len(set(i).intersection(set(ss[1:7]))) >= 5]
     
@@ -664,8 +786,5 @@ def start(predict_round):
 #     pool = Pool(processes=4)
 #     print(pool.map(start, winning))
 
-start(941)
-
-
-
-
+start(942)
+# regression1([11],942)
